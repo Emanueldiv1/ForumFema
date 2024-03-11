@@ -6,41 +6,29 @@ import br.edu.fema.forum.ForumFema.model.StatusTopico;
 import br.edu.fema.forum.ForumFema.model.Topico;
 import br.edu.fema.forum.ForumFema.repository.TopicosRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
 
 @RestController
+@RequestMapping("/topicos")
 public class TopicosController {
 
     @Autowired
     private TopicosRepository topicosRepository;
 
-    @RequestMapping("/topicos")
-    public List<TopicosDTO> lista(String nomeCurso) {
-        if (nomeCurso == null) {
-            List<Topico> topicos = topicosRepository.findAll();
-            return TopicosDTO.converter(topicos);
+
+    @GetMapping()
+    public List<TopicosDTO> lista(String nomeCurso, StatusTopico status) {
+        List<Topico> topicos;
+        if (nomeCurso != null) {
+            topicos = topicosRepository.findByCursoNome(nomeCurso);
+        } else if (status != null) {
+            topicos = topicosRepository.findByStatus(status);
         } else {
-            List<Topico> topicos = topicosRepository.findByCursoNome(nomeCurso);
-            return TopicosDTO.converter(topicos);
+            topicos = topicosRepository.findAll();
         }
-
-    }
-
-    @RequestMapping("/statusTopicos")
-    public List<TopicosDTO> listas(StatusTopico status) {
-        if (status == null) {
-            List<Topico> topicos = topicosRepository.findAll();
-            return TopicosDTO.converter(topicos);
-        } else {
-            List<Topico> topicos = topicosRepository.findByStatus(status);
-            return TopicosDTO.converter(topicos);
-        }
-
-
+        return TopicosDTO.converter(topicos);
     }
 }
