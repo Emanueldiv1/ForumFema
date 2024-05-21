@@ -51,6 +51,5 @@ public class TokenService {
         return Long.parseLong(claims.getSubject());
     }
 
-
 }
 
